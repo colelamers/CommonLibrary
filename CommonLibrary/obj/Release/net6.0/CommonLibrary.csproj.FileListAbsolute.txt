@@ -1,0 +1,12 @@
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\bin\Release\net6.0\CommonLibrary.deps.json
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\bin\Release\net6.0\CommonLibrary.dll
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\bin\Release\net6.0\CommonLibrary.pdb
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.csproj.AssemblyReference.cache
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.AssemblyInfoInputs.cache
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.AssemblyInfo.cs
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.dll
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\refint\CommonLibrary.dll
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\CommonLibrary.pdb
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibrary\obj\Release\net6.0\ref\CommonLibrary.dll
