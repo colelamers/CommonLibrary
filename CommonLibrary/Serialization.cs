@@ -24,6 +24,8 @@ namespace CommonLibrary
      *               payload is the equivalent of interpreting that payload as a standalone executable 
      *               and launching it."
      *               https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+     * 2023-08-13    Revised GetAssemblyNamePath and GetConfigFilePath with explicity full path values
+     *                instead of relative assumptions. 
      *
      */
     public static class SerializationActions // todo 4; look into having this extend configuration?
@@ -268,7 +270,7 @@ namespace CommonLibrary
             {
                 string execPath = Path.GetDirectoryName(compiledCodeFullPath);
                 string fileName = Path.GetFileNameWithoutExtension(compiledCodeFullPath);
-                return execPath + fileName + "_Config." + fileType;
+                return execPath + "\\" + fileName + "_Config." + fileType;
             }
             else
             {
@@ -281,7 +283,7 @@ namespace CommonLibrary
          */
         public static string GetAssemblyNamePath<T>()
         {
-            string compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T)).GetName().CodeBase;
+            string compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T)).Location;
             if (!string.IsNullOrEmpty(compiledSolutionDllFullPath))
             {
                 return compiledSolutionDllFullPath;
