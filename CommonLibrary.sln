@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{3D4AF4C5-B37E-4212-B29C-80151DD4C2CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{3D4AF4C5-B37E-4212-B29C-80151DD4C2CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibraryTest", "CommonLibraryTest\CommonLibraryTest.csproj", "{3DCC5E5D-E222-43E8-9142-5B0843C1523B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3D4AF4C5-B37E-4212-B29C-80151DD4C2CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D4AF4C5-B37E-4212-B29C-80151DD4C2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D4AF4C5-B37E-4212-B29C-80151DD4C2CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DCC5E5D-E222-43E8-9142-5B0843C1523B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DCC5E5D-E222-43E8-9142-5B0843C1523B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DCC5E5D-E222-43E8-9142-5B0843C1523B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DCC5E5D-E222-43E8-9142-5B0843C1523B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

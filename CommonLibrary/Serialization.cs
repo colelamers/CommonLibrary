@@ -67,7 +67,6 @@ namespace CommonLibrary
                 binaryFormatter.Serialize(stream, objectToWrite);
             }
         }
-
         /**
          * Writes the given object instance to an XML file.
          * 
@@ -191,28 +190,26 @@ namespace CommonLibrary
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          */
-        public static void SaveConfigFile<T>(T config, string appendingString = "_Config",
-                                                           string fileType = "xml")
+        public static void SaveConfigFile<T>(string fileType = "xml") where T : new()
         {
+            // todo 4; allow for additional serialization saving?
+            string fileName = GetConfigFilePath<T>(fileType);
 
-            string fileName = GetConfigFilePath<T>(appendingString, fileType);
             // Creates the config file if it doesn't exist
             if (!File.Exists(Path.GetFullPath(fileName)))
             {
-                // Using statement for 
                 using (StreamWriter sw = File.CreateText(fileName))
                 {
-                    // todo 1; test this...
                     sw.Flush();
                 }
             }
 
-            if (fileType.Equals("xml"))
+            using (FileStream stream = new FileStream(fileName, FileMode.Create))
             {
-                using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                if (fileType.Equals("xml"))
                 {
                     XmlSerializer xml = new XmlSerializer(typeof(T));
-                    xml.Serialize(stream, config);
+                    xml.Serialize(stream, new T());
                 }
             }
         }
@@ -233,15 +230,20 @@ namespace CommonLibrary
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          */
-        public static T LoadConfigFile<T>(T config, string appendingString = "_Config",
-                                                           string fileType = "xml")
+        public static T LoadConfigFile<T>(string fileType = "xml") where T : class
         {
-            string fileName = GetConfigFilePath<T>(appendingString, fileType);
+            // todo 4; allow for additional serialization loading?
+            string fileName = GetConfigFilePath<T>(fileType);
             using (FileStream stream = new FileStream(fileName, FileMode.Open))
             {
-                XmlSerializer xml = new XmlSerializer(typeof(T));
-                return (T)xml.Deserialize(stream);
+                if (fileType.Equals("xml"))
+                {
+                    XmlSerializer xml = new XmlSerializer(typeof(T));
+                    return (T)xml.Deserialize(stream);
+                }
             }
+
+            return null;
         }
         /**
          * Retrieves the configuration file's fully qualified path name. 
@@ -259,20 +261,36 @@ namespace CommonLibrary
          * @returns | "C:\\fully\\qualified\\path.filetype
          * Returns the config file path.
          */
-        public static string GetConfigFilePath<T>(string appendingString = "_Config", string fileType = "xml")
+        public static string GetConfigFilePath<T>(string fileType = "xml")
         {
-            return GetAssemblyNamePath<T>() + appendingString + "." + fileType;
+            string compiledCodeFullPath = GetAssemblyNamePath<T>();
+            if (!string.IsNullOrEmpty(compiledCodeFullPath))
+            {
+                string execPath = Path.GetDirectoryName(compiledCodeFullPath);
+                string fileName = Path.GetFileNameWithoutExtension(compiledCodeFullPath);
+                return execPath + fileName + "_Config." + fileType;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
         #endregion Configuration Serialization
-
         /**
          * Retrieves just the assembly path of the project name;
          */
         public static string GetAssemblyNamePath<T>()
         {
-            System.Type configtype = typeof(T);
-            Assembly assemble = Assembly.GetAssembly(configtype);
-            return assemble?.GetName()?.Name;
+            string compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T)).GetName().CodeBase;
+            if (!string.IsNullOrEmpty(compiledSolutionDllFullPath))
+            {
+                return compiledSolutionDllFullPath;
+            }
+            else
+            {
+                return string.Empty;
+            }
+
         }
     }
 }

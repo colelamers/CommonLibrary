@@ -18,7 +18,7 @@ namespace CommonLibrary
      * 
      * 2023-08-12    First version
      */     
-    public class Initialization<T> where T : new() 
+    public class Initialization<T> where T : class, new()
     {
         public Logging? Logging { get; private set; }
         public T? Configuration { get; private set; }
@@ -29,20 +29,17 @@ namespace CommonLibrary
         {
             Logging = new Logging();
             Configuration = new T();
-            string projectNamePath = SerializationActions.GetAssemblyNamePath<T>();
             string xmlConfigFile = SerializationActions.GetConfigFilePath<T>();
 
             try
             {
                 if (!File.Exists(xmlConfigFile))
                 {
-                    SerializationActions.SaveConfigFile<T>(Configuration, projectNamePath);
-                    Configuration = SerializationActions.LoadConfigFile<T>(Configuration);
+                    SerializationActions.SaveConfigFile<T>();
                 }
-                else
-                {
-                    Configuration = SerializationActions.LoadConfigFile<T>(Configuration);
-                }
+
+                Configuration = SerializationActions.LoadConfigFile<T>();
+
             }
             catch (Exception ex)
             {
