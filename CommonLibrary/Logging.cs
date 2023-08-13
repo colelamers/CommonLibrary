@@ -52,6 +52,7 @@
                 using (StreamWriter sw = File.CreateText(_logFilePathAndName)) 
                 {
                     sw.Flush();
+                    sw.Close();
                 }
             }
         }

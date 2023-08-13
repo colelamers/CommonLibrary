@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-
-namespace CommonLibrary
+﻿namespace CommonLibrary
 {
     /*
      * Created by Cole Lamers 
@@ -17,33 +10,46 @@ namespace CommonLibrary
      * it for each new project.
      * 
      * 2023-08-12    First version
-     */     
-    public class Initialization<T> where T : class, new()
+     * 2023-08-13    Revised Initialization function a bit. Added some additional
+     *               type constraints for the "T" type. Streamlined it pretty
+     *               well to have everything I need work on startup as soon as the
+     *               class is initialized. All self contained.
+     *               Revised Initialization to become a subclass because I don't
+     *               want the serializationactions functions callable outside of 
+     *               the Init class. Specifically because the Binary reading can be
+     *               potentially dangerous.
+     * 
+     */
+    public class Init
     {
-        public Logging? Logging { get; private set; }
-        public T? Configuration { get; private set; }
-        /**
-         * todo 3;
-         */
-        public Initialization() 
+        // todo 3;
+        public class Initialization<T> where T : class, new()
         {
-            Logging = new Logging();
-            Configuration = new T();
-            string xmlConfigFile = SerializationActions.GetConfigFilePath<T>();
-
-            try
+            public Logging? Logging { get; private set; }
+            public T? Configuration { get; private set; }
+            // todo 3;
+            public Initialization()
             {
-                if (!File.Exists(xmlConfigFile))
+                try
                 {
-                    SerializationActions.SaveConfigFile<T>();
+                    Logging = new Logging();
+                    Configuration = new T();
+                    string xmlConfigFile = SerializationActions.Serializing.GetConfigFilePath<T>();
+
+                    if (!File.Exists(xmlConfigFile))
+                    {
+                        SerializationActions.Serializing.SaveConfigFile<T>();
+                    }
+
+                    Configuration = SerializationActions.Serializing.LoadConfigFile<T>();
                 }
-
-                Configuration = SerializationActions.LoadConfigFile<T>();
-
-            }
-            catch (Exception ex)
-            {
-                Logging.Log("Error Initializing Config file.", ex);
+                catch (Exception ex)
+                {
+                    if (Logging != null)
+                    {
+                        Logging.Log("Error Initializing Config file.", ex);
+                    }
+                }
             }
         }
     }

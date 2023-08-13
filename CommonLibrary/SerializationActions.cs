@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml.Serialization;
 
-namespace CommonLibrary
+namespace CommonLibrary.SerializationActions
 {
     /*
      * Created by Cole Lamers 
@@ -25,10 +25,11 @@ namespace CommonLibrary
      *               and launching it."
      *               https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
      * 2023-08-13    Revised GetAssemblyNamePath and GetConfigFilePath with explicity full path values
-     *                instead of relative assumptions. 
+     *               instead of relative assumptions. 
+     *               Performed a file rename to resolve some conflicting naming on MS serialization.
      *
      */
-    public static class SerializationActions // todo 4; look into having this extend configuration?
+    public class Serializing : Init // todo 4; look into having this extend configuration?
     {
         #region Writing
         /**
@@ -184,10 +185,6 @@ namespace CommonLibrary
          * -To prevent a variable from being serialized, denote it with the [NonSerialized] attribute.
          * -Cannot be applied to properties.
          * 
-         * @param | string | "_Config" |
-         * Pass in any appending string to your file name before the file type period.
-         * -Default set to "_Config"
-         * 
          * @param | string | "xml" |
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
@@ -203,6 +200,7 @@ namespace CommonLibrary
                 using (StreamWriter sw = File.CreateText(fileName))
                 {
                     sw.Flush();
+                    sw.Close();
                 }
             }
 
@@ -224,26 +222,32 @@ namespace CommonLibrary
          * -To prevent a variable from being serialized, denote it with the [NonSerialized] attribute.
          * -Cannot be applied to properties.
          * 
-         * @param | string | "_Config" |
-         * Pass in any appending string to your file name before the file type period.
-         * -Default set to "_Config"
-         * 
          * @param | string | "xml" |
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
+         * 
+         * @return | T or null |
+         * Configuration type T will be returned after XML serialization. Null returns
+         * if the code fails at any point to load in the configuration.
          */
         public static T LoadConfigFile<T>(string fileType = "xml") where T : class
         {
             // todo 4; allow for additional serialization loading?
             string fileName = GetConfigFilePath<T>(fileType);
-            using (FileStream stream = new FileStream(fileName, FileMode.Open))
+            
+            // Attemp to serialize, if you cannot
+            try
             {
-                if (fileType.Equals("xml"))
+                using (FileStream stream = new FileStream(fileName, FileMode.Open))
                 {
-                    XmlSerializer xml = new XmlSerializer(typeof(T));
-                    return (T)xml.Deserialize(stream);
+                    if (fileType.Equals("xml"))
+                    {
+                        XmlSerializer xml = new XmlSerializer(typeof(T));
+                        return (T)xml.Deserialize(stream);
+                    }
                 }
             }
+            catch { }
 
             return null;
         }
@@ -252,15 +256,11 @@ namespace CommonLibrary
          * The default values assume a standard way for configuration file naming
          * and as a designated type of XML.
          * 
-         * @param | string | "_Config" |
-         * Pass in any appending string to your file name before the file type period.
-         * -Default set to "_Config"
-         * 
          * @param | string | "xml" |
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          * 
-         * @returns | "C:\\fully\\qualified\\path.filetype
+         * @returns | "C:\\fully\\qualified\\path_Config.filetype" |
          * Returns the config file path.
          */
         public static string GetConfigFilePath<T>(string fileType = "xml")
@@ -280,6 +280,9 @@ namespace CommonLibrary
         #endregion Configuration Serialization
         /**
          * Retrieves just the assembly path of the project name;
+         * 
+         * @returns | string | "C:\\fully\\qualified\\path.file"
+         * Returns the full path of the assembly item.
          */
         public static string GetAssemblyNamePath<T>()
         {
