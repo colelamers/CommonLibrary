@@ -44,8 +44,6 @@
             // Creates the log directory if it doesn't exist
             if (!Directory.Exists(_logFilePath))
             {
-                // todo 2; need to fix this so that it doesn't check if a directory
-                // exist but it just makes it instead.
                 Directory.CreateDirectory(_logFilePath);
             }
 
@@ -53,7 +51,6 @@
             {
                 using (StreamWriter sw = File.CreateText(_logFilePathAndName)) 
                 {
-                    // todo 1; verify this works
                     sw.Flush();
                 }
             }
