@@ -1,4 +1,9 @@
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\CoverletSourceRootsMapping
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.csproj.AssemblyReference.cache
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.AssemblyInfoInputs.cache
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.AssemblyInfo.cs
+C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.csproj.CoreCompileInputs.cache
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\testhost.dll
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\testhost.exe
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
@@ -89,11 +94,6 @@ C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\Com
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\CommonLibrary.pdb
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Release\net6.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.csproj.AssemblyReference.cache
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.AssemblyInfoInputs.cache
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.AssemblyInfo.cs
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.csproj.CoreCompileInputs.cache
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.csproj.CopyComplete
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\CommonLibraryTest.dll
 C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Release\net6.0\refint\CommonLibraryTest.dll
