@@ -25,31 +25,49 @@
         // todo 3;
         public class Initialization<T> where T : class, new()
         {
-            public Logging? Logging { get; private set; }
+            public Logging Logging { get; private set; }
             public T? Configuration { get; private set; }
             // todo 3;
             public Initialization()
             {
+                Logging = new Logging();
+
                 try
                 {
-                    Logging = new Logging();
                     Configuration = new T();
                     string xmlConfigFile = SerializationActions.Serializing.GetConfigFilePath<T>();
 
                     if (!File.Exists(xmlConfigFile))
                     {
-                        SerializationActions.Serializing.SaveConfigFile<T>();
+                        SerializationActions.Serializing.CreateNewConfiguration<T>();
                     }
 
                     Configuration = SerializationActions.Serializing.LoadConfigFile<T>();
                 }
                 catch (Exception ex)
                 {
-                    if (Logging != null)
-                    {
-                        Logging.Log("Error Initializing Config file.", ex);
-                    }
+                    Logging.Log("Error Initializing Config file.", ex);
                 }
+            }
+            /**
+             * Save the current configuration file located in the Initialization<T> class.
+             * Keeps it OO and prevents from having multiple types of the same object
+             * initalized.
+             * 
+             * Leaving Configuration as private set allows for the contents of the xml to
+             * be updated, which means it will be capable of being serialized properly.
+             * This prevents errors that could occur if a new object is accidentally 
+             * assigned to the member class.
+             */
+            public void SaveConfiguration()
+            {
+                SerializationActions.Serializing.SaveConfigFile(Configuration);
+            }
+            // todo 3;
+            public string GetFullAssemblyPath()
+            {
+                // todo 1; unsure if this is needed?
+                return SerializationActions.Serializing.GetAssemblyNamePath<T>();
             }
         }
     }

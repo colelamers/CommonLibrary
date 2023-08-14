@@ -189,29 +189,67 @@ namespace CommonLibrary.SerializationActions
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          */
-        public static void SaveConfigFile<T>(string fileType = "xml") where T : new()
+        public static void CreateNewConfiguration<T>(string fileType = "xml") where T : new()
         {
-            // todo 4; allow for additional serialization saving?
-            string fileName = GetConfigFilePath<T>(fileType);
-
-            // Creates the config file if it doesn't exist
-            if (!File.Exists(Path.GetFullPath(fileName)))
+            try
             {
-                using (StreamWriter sw = File.CreateText(fileName))
+                // todo 4; allow for additional serialization?
+                string fileName = GetConfigFilePath<T>(fileType);
+
+                // Creates the config file if it doesn't exist
+                if (!File.Exists(Path.GetFullPath(fileName)))
                 {
-                    sw.Flush();
-                    sw.Close();
+                    using (StreamWriter sw = File.CreateText(fileName))
+                    {
+                        sw.Flush();
+                        sw.Close();
+                    }
+                }
+
+                using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                {
+                    if (fileType.Equals("xml"))
+                    {
+                        XmlSerializer xml = new XmlSerializer(typeof(T));
+                        xml.Serialize(stream, new T());
+                    }
                 }
             }
-
-            using (FileStream stream = new FileStream(fileName, FileMode.Create))
+            catch { }
+        }
+        /**
+         * Overwrites current configuration file with object passed in.
+         * 
+         * @type | T |
+         * The type of object associated with the configuration file.
+         * -Object type (and all child types) must be denoted with the [Serializable] attribute.
+         * -To prevent a variable from being serialized, denote it with the [NonSerialized] attribute.
+         * -Cannot be applied to properties.
+         * 
+         * @param | T | 
+         * This is the configuration object you are passing in to save/overwrite for the 
+         * current file.
+         * 
+         * @param | string | "xml" |
+         * Pass the file type, no period preceeding it. Only the file type designation.
+         * -Default set to xml
+         */
+        public static void SaveConfigFile<T>(T configObject, string fileType = "xml") where T : new()
+        {
+            try
             {
-                if (fileType.Equals("xml"))
+                string fileName = GetConfigFilePath<T>(fileType);
+                using (FileStream stream = new FileStream(fileName, FileMode.Create))
                 {
-                    XmlSerializer xml = new XmlSerializer(typeof(T));
-                    xml.Serialize(stream, new T());
+                    if (fileType.Equals("xml"))
+                    {
+                        XmlSerializer xml = new XmlSerializer(typeof(T));
+                        xml.Serialize(stream, configObject);
+                    }
                 }
             }
+            catch { }
+
         }
         /**
          * Loads in an already existing XML file.
