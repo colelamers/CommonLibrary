@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace CommonLibrary.SerializationActions
@@ -27,10 +28,50 @@ namespace CommonLibrary.SerializationActions
      * 2023-08-13    Revised GetAssemblyNamePath and GetConfigFilePath with explicity full path values
      *               instead of relative assumptions. 
      *               Performed a file rename to resolve some conflicting naming on MS serialization.
+     * 2023-08-19    Revised xml reading features to support error handling and logging making xml
+     *               debugging much easier.
      *
      */
     public class Serializing : Init // todo 4; look into having this extend configuration?
     {
+        #region XmlDelegates
+        /**
+         * This is utilized to support error handling when debugging xml
+         * serializing errors. This specifically detects an unknown node
+         * in the type of serialized configuration.
+         * 
+         * @param | object |
+         * Required for the delegate.
+         * 
+         * @param | XmlNodeEventArgs |
+         * This is the default instantiated delegate item from the xml api
+         * that provides node error handling.
+         */
+        protected static void serializer_UnknownNode
+        (object sender, XmlNodeEventArgs e)
+        {
+            throw new Exception($"Unknown Node in Xml! Name: {e.Name}, Text: {e.Text}");
+        }
+        /**
+         * This is utilized to support error handling when debugging xml
+         * serializing errors. This specifically detects an unknown attributes
+         * in the type of serialized configuration.
+         * 
+         * @param | object |
+         * Required for the delegate.
+         * 
+         * @param | XmlAttributeEventArgs |
+         * This is the default instantiated delegate item from the xml api
+         * that provides attribute error handling.
+         */
+        protected static void serializer_UnknownAttribute
+        (object sender, XmlAttributeEventArgs e)
+        {
+            System.Xml.XmlAttribute attr = e.Attr;
+            throw new Exception($"Unknown Node in Xml! Name: {attr.Name}, Value: {attr.Value}");
+
+        }
+        #endregion XmlDelegates
         #region Writing
         /**
          * Writes the given object instance to a binary file.
@@ -70,80 +111,8 @@ namespace CommonLibrary.SerializationActions
                 binaryFormatter.Serialize(stream, objectToWrite);
             }
         }
-        /**
-         * Writes the given object instance to an XML file.
-         * 
-         * @type | T |
-         * Type of serialized object from the config file.
-         * -Object type must have a parameterless constructor.
-         * 
-         * @param | string | "C:\\fully\\qualified\\path.file" |
-         * The file path to read the object instance from.
-         * -Only Public properties and variables will be written to the file. 
-         * -These can be any type, even other classes.
-         * 
-         * @param | T |
-         * The object instance of Type "T" to write to the file.
-         * -If there are public properties/variables that you do not want 
-         * written to the file, decorate them with the [XmlIgnore] attribute.
-         * 
-         * @param | bool | true, false |
-         * False: File will be overwritten if already exists.
-         * True:  Contents will be appended to file
-         * 
-         * @returns | T | 
-         * Returns a new instance of the object read from the XML file.
-         */
-        public static void WriteToFile_Xml<T>(string filePath, T objectToWrite, bool append = false) where T : new()
-        {
-            // todo 4; why this TextWriter logic?
-            TextWriter writer = null;
-            try
-            {
-                writer = new StreamWriter(filePath, append);
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                serializer.Serialize(writer, objectToWrite);
-            }
-            finally
-            {
-                if (writer != null)
-                {
-                    writer.Close();
-                }
-            }
-        }
         #endregion Writing
         #region Reading
-        /**
-         * Reads an object instance from an XML file.
-         * 
-         * @type | T |
-         * Type of serialized object from the config file.
-         * -Object type must have a parameterless constructor.
-         * 
-         * @param | string | "C:\\fully\\qualified\\path.file" |
-         * The file path to read the object instance from.
-         * 
-         * @returns | T | 
-         * Returns a new instance of the configuration object read from the XML file.
-         */
-        public static T ReadFromFile_Xml<T>(string filePath) where T : new()
-        {
-            TextReader reader = null;
-            try
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                reader = new StreamReader(filePath);
-                return (T)serializer.Deserialize(reader);
-            }
-            finally
-            {
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-            }
-        }
         /**
          * Reads an object instance from a binary file.
          * 
@@ -189,12 +158,14 @@ namespace CommonLibrary.SerializationActions
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          */
-        public static void CreateNewConfiguration<T>(string fileType = "xml") where T : new()
+        public static void CreateNewConfiguration<T>(Logging Logger, string fileType = "xml") where T : new()
         {
             try
             {
+                Logger.Log("CreateNewConfiguration...");
+
                 // todo 4; allow for additional serialization?
-                string fileName = GetConfigFilePath<T>(fileType);
+                string fileName = GetConfigFilePath<T>(Logger, fileType);
 
                 // Creates the config file if it doesn't exist
                 if (!File.Exists(Path.GetFullPath(fileName)))
@@ -234,22 +205,31 @@ namespace CommonLibrary.SerializationActions
          * Pass the file type, no period preceeding it. Only the file type designation.
          * -Default set to xml
          */
-        public static void SaveConfigFile<T>(T configObject, string fileType = "xml") where T : new()
+        public static void SaveConfigFile<T>(Logging Logger, T configObject, string fileType = "xml")
         {
             try
             {
-                string fileName = GetConfigFilePath<T>(fileType);
+                Logger.Log("SaveConfigFile...");
+                string fileName = GetConfigFilePath<T>(Logger, fileType);
+                Logger.Log("FileName:" + fileName);
                 using (FileStream stream = new FileStream(fileName, FileMode.Create))
                 {
                     if (fileType.Equals("xml"))
                     {
-                        XmlSerializer xml = new XmlSerializer(typeof(T));
-                        xml.Serialize(stream, configObject);
+                        XmlSerializer serializer = new XmlSerializer(typeof(T));
+                        serializer.UnknownNode += new
+                            XmlNodeEventHandler(serializer_UnknownNode);
+                        serializer.UnknownAttribute += new
+                            XmlAttributeEventHandler(serializer_UnknownAttribute);
+
+                        serializer.Serialize(stream, configObject);
                     }
                 }
             }
-            catch { }
-
+            catch (Exception ex)
+            {
+                Logger.Log("SaveConfigFile error", ex);
+            }
         }
         /**
          * Loads in an already existing XML file.
@@ -268,25 +248,34 @@ namespace CommonLibrary.SerializationActions
          * Configuration type T will be returned after XML serialization. Null returns
          * if the code fails at any point to load in the configuration.
          */
-        public static T LoadConfigFile<T>(string fileType = "xml") where T : class
+        public static T? LoadConfigFile<T>(Logging Logger, string fileType = "xml") where T : class, new()
         {
-            // todo 4; allow for additional serialization loading?
-            string fileName = GetConfigFilePath<T>(fileType);
-            
-            // Attemp to serialize, if you cannot
             try
             {
+                Logger.Log("LoadConfigFile...");
+                // todo 4; allow for additional serialization loading?
+                string fileName = GetConfigFilePath<T>(Logger, fileType);
+                Logger.Log("FileName:" + fileName);
                 using (FileStream stream = new FileStream(fileName, FileMode.Open))
                 {
+                    // todo 4; use switch case in future for multiple file types
                     if (fileType.Equals("xml"))
                     {
-                        XmlSerializer xml = new XmlSerializer(typeof(T));
-                        return (T)xml.Deserialize(stream);
+                        // Event Handlers help with debugging with issues related to xml
+                        XmlSerializer serializer = new XmlSerializer(typeof(T));
+                        serializer.UnknownNode += new
+                            XmlNodeEventHandler(serializer_UnknownNode);
+                        serializer.UnknownAttribute += new
+                            XmlAttributeEventHandler(serializer_UnknownAttribute);
+
+                        T xml = (T)serializer.Deserialize(stream);
                     }
                 }
             }
-            catch { }
-
+            catch (Exception ex)
+            {
+                Logger.Log("LoadConfigFile error", ex);
+            }
             return null;
         }
         /**
@@ -301,19 +290,21 @@ namespace CommonLibrary.SerializationActions
          * @returns | "C:\\fully\\qualified\\path_Config.filetype" |
          * Returns the config file path.
          */
-        public static string GetConfigFilePath<T>(string fileType = "xml")
+        public static string GetConfigFilePath<T>(Logging Logger, string fileType = "xml")
         {
-            string compiledCodeFullPath = GetAssemblyNamePath<T>();
+            Logger.Log("LoadConfigFile...");
+
+            string? compiledCodeFullPath = GetAssemblyNamePath<T>(Logger);
             if (!string.IsNullOrEmpty(compiledCodeFullPath))
             {
-                string execPath = Path.GetDirectoryName(compiledCodeFullPath);
+                string? execPath = Path.GetDirectoryName(compiledCodeFullPath);
                 string fileName = Path.GetFileNameWithoutExtension(compiledCodeFullPath);
-                return execPath + "\\" + fileName + "_Config." + fileType;
+                if (!string.IsNullOrEmpty(execPath) && !string.IsNullOrEmpty(fileName))
+                {
+                    return execPath + "\\" + fileName + "_Config." + fileType;
+                }
             }
-            else
-            {
-                return string.Empty;
-            }
+            return string.Empty;
         }
         #endregion Configuration Serialization
         /**
@@ -322,9 +313,10 @@ namespace CommonLibrary.SerializationActions
          * @returns | string | "C:\\fully\\qualified\\path.file"
          * Returns the full path of the assembly item.
          */
-        public static string GetAssemblyNamePath<T>()
+        public static string GetAssemblyNamePath<T>(Logging Logger)
         {
-            string compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T)).Location;
+            Logger.Log("GetAssemblyNamePath...");
+            string? compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T))?.Location;
             if (!string.IsNullOrEmpty(compiledSolutionDllFullPath))
             {
                 return compiledSolutionDllFullPath;
