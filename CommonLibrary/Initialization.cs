@@ -25,28 +25,27 @@
         // todo 3;
         public class Initialization<T> where T : class, new()
         {
-            public Logging Logging { get; private set; }
-            public T? Configuration { get; private set; }
+            public Logging Logger { get; private set; }
+            public T Configuration { get; private set; }
             // todo 3;
             public Initialization()
             {
-                Logging = new Logging();
+                Logger = new Logging();
+                Configuration = new T();
 
                 try
                 {
-                    Configuration = new T();
-                    string xmlConfigFile = SerializationActions.Serializing.GetConfigFilePath<T>();
-
+                    string xmlConfigFile = SerializationActions.Serializing.GetConfigFilePath<T>(Logger);
                     if (!File.Exists(xmlConfigFile))
                     {
-                        SerializationActions.Serializing.CreateNewConfiguration<T>();
+                        SerializationActions.Serializing.CreateNewConfiguration<T>(Logger);
                     }
 
-                    Configuration = SerializationActions.Serializing.LoadConfigFile<T>();
+                    Configuration = SerializationActions.Serializing.LoadConfigFile<T>(Logger);
                 }
                 catch (Exception ex)
                 {
-                    Logging.Log("Error Initializing Config file.", ex);
+                    Logger.Log("Error Initializing Config file.", ex);
                 }
             }
             /**
@@ -61,13 +60,13 @@
              */
             public void SaveConfiguration()
             {
-                SerializationActions.Serializing.SaveConfigFile(Configuration);
+                SerializationActions.Serializing.SaveConfigFile(Logger, Configuration);
             }
             // todo 3;
             public string GetFullAssemblyPath()
             {
                 // todo 1; unsure if this is needed?
-                return SerializationActions.Serializing.GetAssemblyNamePath<T>();
+                return SerializationActions.Serializing.GetAssemblyNamePath<T>(Logger);
             }
         }
     }
