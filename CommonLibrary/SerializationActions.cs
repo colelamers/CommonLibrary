@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace CommonLibrary.SerializationActions
@@ -30,6 +29,8 @@ namespace CommonLibrary.SerializationActions
      *               Performed a file rename to resolve some conflicting naming on MS serialization.
      * 2023-08-19    Revised xml reading features to support error handling and logging making xml
      *               debugging much easier.
+     * 2023-09-20    Replaced IsNullOrEmpty's with IsNullOrWhiteSpace. Also forgot a "return T" in XML
+     *               loading which is why it would load, but always return null.
      *
      */
     public class Serializing : Init // todo 4; look into having this extend configuration?
@@ -269,6 +270,7 @@ namespace CommonLibrary.SerializationActions
                             XmlAttributeEventHandler(serializer_UnknownAttribute);
 
                         T xml = (T)serializer.Deserialize(stream);
+                        return xml;
                     }
                 }
             }
@@ -294,15 +296,25 @@ namespace CommonLibrary.SerializationActions
         {
             Logger.Log("LoadConfigFile...");
 
+            try
+            {
+
+
             string? compiledCodeFullPath = GetAssemblyNamePath<T>(Logger);
-            if (!string.IsNullOrEmpty(compiledCodeFullPath))
+            if (!string.IsNullOrWhiteSpace(compiledCodeFullPath))
             {
                 string? execPath = Path.GetDirectoryName(compiledCodeFullPath);
                 string fileName = Path.GetFileNameWithoutExtension(compiledCodeFullPath);
-                if (!string.IsNullOrEmpty(execPath) && !string.IsNullOrEmpty(fileName))
+                if (!string.IsNullOrWhiteSpace(execPath) && !string.IsNullOrWhiteSpace(fileName))
                 {
                     return execPath + "\\" + fileName + "_Config." + fileType;
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("error...", ex);
+
             }
             return string.Empty;
         }
@@ -317,7 +329,7 @@ namespace CommonLibrary.SerializationActions
         {
             Logger.Log("GetAssemblyNamePath...");
             string? compiledSolutionDllFullPath = Assembly.GetAssembly(typeof(T))?.Location;
-            if (!string.IsNullOrEmpty(compiledSolutionDllFullPath))
+            if (!string.IsNullOrWhiteSpace(compiledSolutionDllFullPath))
             {
                 return compiledSolutionDllFullPath;
             }
