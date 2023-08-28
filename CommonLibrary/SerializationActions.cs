@@ -29,7 +29,7 @@ namespace CommonLibrary.SerializationActions
      *               Performed a file rename to resolve some conflicting naming on MS serialization.
      * 2023-08-19    Revised xml reading features to support error handling and logging making xml
      *               debugging much easier.
-     * 2023-09-20    Replaced IsNullOrEmpty's with IsNullOrWhiteSpace. Also forgot a "return T" in XML
+     * 2023-08-20    Replaced IsNullOrEmpty's with IsNullOrWhiteSpace. Also forgot a "return T" in XML
      *               loading which is why it would load, but always return null.
      *
      */

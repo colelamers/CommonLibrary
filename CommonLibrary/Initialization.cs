@@ -10,14 +10,6 @@
      * it for each new project.
      * 
      * 2023-08-12    First version
-     * 2023-08-13    Revised Initialization function a bit. Added some additional
-     *               type constraints for the "T" type. Streamlined it pretty
-     *               well to have everything I need work on startup as soon as the
-     *               class is initialized. All self contained.
-     *               Revised Initialization to become a subclass because I don't
-     *               want the serializationactions functions callable outside of 
-     *               the Init class. Specifically because the Binary reading can be
-     *               potentially dangerous.
      * 
      */
     public class Init
@@ -65,7 +57,7 @@
             // todo 3;
             public string GetFullAssemblyPath()
             {
-                // todo 1; unsure if this is needed?
+                // todo 4; unsure if this is needed?
                 return SerializationActions.Serializing.GetAssemblyNamePath<T>(Logger);
             }
         }
