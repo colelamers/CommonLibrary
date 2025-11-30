@@ -1,6 +1,0 @@
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\bin\Debug\net6.0\CoverletSourceRootsMapping
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Debug\net6.0\CommonLibraryTest.csproj.AssemblyReference.cache
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Debug\net6.0\CommonLibraryTest.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Debug\net6.0\CommonLibraryTest.AssemblyInfoInputs.cache
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Debug\net6.0\CommonLibraryTest.AssemblyInfo.cs
-C:\Users\Xen\source\repos\CommonLibrary\CommonLibraryTest\obj\Debug\net6.0\CommonLibraryTest.csproj.CoreCompileInputs.cache
