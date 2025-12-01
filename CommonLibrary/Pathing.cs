@@ -49,6 +49,8 @@ public static class Pathing
     {
         get
         {
+            // Returns the directory of the currently running application, 
+            // not the DLL.
             return AppContext.BaseDirectory;
         }
     }
@@ -57,7 +59,15 @@ public static class Pathing
     {
         get
         {
-            //return System.Reflection.Assembly.GetEntryAssembly().GetModules()[0].FullyQualifiedName;
+            return Assembly.GetEntryAssembly()?.GetModules()[0].FullyQualifiedName ?? "";
+        }
+    }
+
+    public static string DllFile
+    {
+        get
+        {
+            // Points to the DLL file referenced by the project, not the EXE
             return MethodBase.GetCurrentMethod()?.DeclaringType?.Assembly.Location ?? "";
         }
     }

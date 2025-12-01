@@ -7,7 +7,7 @@ namespace CommonLibrary;
 
 public class ConfigSerilization
 {
-    public string _defaultFileLocation { get; set; }
+    private string _defaultFileLocation { get; set; }
     public ConfigSerilization()
     {
         _defaultFileLocation = Pathing.ExecutablePath + Pathing.ExeFileName + "_config.xml";
