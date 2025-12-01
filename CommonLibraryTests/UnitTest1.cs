@@ -8,16 +8,17 @@ namespace CommonLibraryTests
     public class ConfigSerializationUnitTests : IDisposable
     {
         private readonly ConfigSerilization serializer;
+        string _configPath = Pathing.ExecutablePath + Pathing.ExeFileName + "_config.xml";
 
         public ConfigSerializationUnitTests()
         {
             // Constructor replaces [SetUp]
             serializer = new ConfigSerilization("unit_test_config.xml", true);
-            Console.WriteLine("Pathing.Project        " + serializer._defaultFileLocation);
+            Console.WriteLine("Pathing.Project        " + _configPath);
 
             // Ensure clean file before each test
-            if (File.Exists(serializer._defaultFileLocation)) {
-                File.Delete(serializer._defaultFileLocation);
+            if (File.Exists(_configPath)) {
+                File.Delete(_configPath);
             }
         }
 
@@ -26,6 +27,8 @@ namespace CommonLibraryTests
         {
             Logging log = new Logging(LogLevel.TRACE);
             log.Trace(MethodBase.GetCurrentMethod().ToString());
+            string configPath = Pathing.ExecutablePath + Pathing.ExeFileName + "_config.xml";
+
             // 1. Create test object
             var original = new TestConfig
             {
@@ -39,8 +42,8 @@ namespace CommonLibraryTests
             };
 
             serializer.WriteXmlConfig(original);
-            Assert.True(File.Exists(serializer._defaultFileLocation), "XML file should exist after serialization");
-            string xmlContent = File.ReadAllText(serializer._defaultFileLocation);
+            Assert.True(File.Exists(_configPath), "XML file should exist after serialization");
+            string xmlContent = File.ReadAllText(_configPath);
             Assert.Contains("<Name>UnitTest</Name>", xmlContent);
             Assert.Contains("<Description>Nested object for unit test</Description>", xmlContent);
 
@@ -56,7 +59,7 @@ namespace CommonLibraryTests
 
         public void Dispose()
         {
-            if (File.Exists(serializer._defaultFileLocation)){
+            if (File.Exists(_configPath)){
                 // File.Delete(serializer._defaultFileLocation);
             }
         }
@@ -80,6 +83,7 @@ namespace CommonLibraryTests
             Console.WriteLine("Pathing.Project        " + Pathing.ProjectFile);
             Console.WriteLine("Pathing.Solution       " + Pathing.SolutionFile);
             Console.WriteLine("Pathing.Executable     " + Pathing.ExecutableFile);
+            Console.WriteLine("Pathing.DllFile        " + Pathing.DllFile);
             Console.WriteLine("Pathing.ExecutablePath " + Pathing.ExecutablePath);
             Console.WriteLine("Pathing.XmlFile        " + Pathing.XmlFile);
             Console.WriteLine("Pathing.XmlFilePath    " + Pathing.XmlFilePath);
