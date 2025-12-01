@@ -1,24 +1,10 @@
-﻿using CommonLibrary;
+﻿using System.Reflection;
+using CommonLibrary;
 using Xunit;
 using Xunit.Sdk;
-using System;
-using System.IO;
 
 namespace CommonLibraryTests
 {
-    public class TestConfig
-    {
-        public string Name { get; set; } = string.Empty;
-        public int Value { get; set; }
-        public NestedConfig Nested { get; set; } = new NestedConfig();
-    }
-
-    public class NestedConfig
-    {
-        public bool IsEnabled { get; set; }
-        public string Description { get; set; } = string.Empty;
-    }
-
     public class ConfigSerializationUnitTests : IDisposable
     {
         private readonly ConfigSerilization serializer;
@@ -38,6 +24,8 @@ namespace CommonLibraryTests
         [Fact]
         public void WriteAndReadXmlConfigTest()
         {
+            Logging log = new Logging(LogLevel.TRACE);
+            log.Trace(MethodBase.GetCurrentMethod().ToString());
             // 1. Create test object
             var original = new TestConfig
             {
@@ -82,8 +70,8 @@ namespace CommonLibraryTests
         public GeneralTests()
         {
             _config = new Configuration();
-            _log = new Logging();
-            _log.TraceLog("Test!");
+            _log = new Logging(LogLevel.FATAL);
+            _log.Trace("Test!");
         }
 
         [Fact]

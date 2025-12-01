@@ -2,6 +2,8 @@
 
 namespace CommonLibrary;
 
-public class Configuration {
+public class Configuration
+{
 
 }
+
